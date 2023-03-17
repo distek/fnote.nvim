@@ -82,6 +82,7 @@ local function float()
 		height = height,
 		col = x,
 		row = y,
+		style = "",
 		border = Fnote.config.window.border or "single",
 	}
 
