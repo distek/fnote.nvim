@@ -88,6 +88,8 @@ local function float()
 
 	vim.api.nvim_win_set_option(curWin, "winhighlight", "Normal:FNoteNormal")
 	vim.api.nvim_win_set_option(curWin, "winhighlight", "EndOfBuffer:FNoteEndOfBuffer")
+	vim.api.nvim_win_set_option(curWin, "winhighlight", "NormalNC:FNoteNormalNC")
+	vim.api.nvim_win_set_option(curWin, "winhighlight", "CursorLine:FNoteCursorLine")
 
 	vim.api.nvim_win_set_config(curWin, opts)
 
