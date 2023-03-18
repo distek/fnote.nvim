@@ -114,6 +114,11 @@ function Fnote.close()
 		return
 	end
 
+	if not vim.api.nvim_win_is_valid(Fnote.winid) then
+		Fnote.winid = nil
+		return
+	end
+
 	vim.api.nvim_win_close(Fnote.winid, true)
 
 	Fnote.winid = nil
@@ -122,9 +127,15 @@ end
 function Fnote.toggle()
 	if Fnote.winid == nil then
 		Fnote.open()
-	else
-		Fnote.close()
+		return
 	end
+
+	if not vim.api.nvim_win_is_valid(Fnote.winid) then
+		Fnote.open()
+		return
+	end
+
+	Fnote.close()
 end
 
 function Fnote.setup(config)
