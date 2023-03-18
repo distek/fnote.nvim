@@ -97,6 +97,7 @@ function Fnote.new()
 	local buf = vim.fn.bufadd(Fnote.config.notes_file)
 
 	vim.bo[buf].buflisted = false
+	vim.bo[buf].bufhidden = "hide"
 
 	Fnote.bufid = buf
 end
