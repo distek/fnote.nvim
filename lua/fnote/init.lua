@@ -1,21 +1,21 @@
-Fnote = {}
+local M = {
+	bufid = nil,
+	winid = nil,
 
-Fnote.bufid = nil
-Fnote.winid = nil
-
-Fnote.config = {
-	anchor = nil,
-	window = {
-		width = nil,
-		height = nil,
-		percent = nil,
-		offset = {
-			x = nil,
-			y = nil,
+	config = {
+		anchor = nil,
+		window = {
+			width = nil,
+			height = nil,
+			percent = nil,
+			offset = {
+				x = nil,
+				y = nil,
+			},
+			border = nil,
 		},
-		border = nil,
+		notes_file = nil,
 	},
-	notes_file = nil,
 }
 
 local defaultConfig = {
@@ -34,29 +34,29 @@ local defaultConfig = {
 }
 
 local function getPos(width, height)
-	local a = Fnote.config.anchor
+	local a = M.config.anchor
 
 	local vimW = vim.o.columns
 	local vimH = vim.o.lines
 
 	if a == "NW" then
-		return Fnote.config.window.offset.x, Fnote.config.window.offset.y
+		return M.config.window.offset.x, M.config.window.offset.y
 	elseif a == "W" then
-		return Fnote.config.window.offset.x, (vimH / 2) - (height / 2) - 1
+		return M.config.window.offset.x, (vimH / 2) - (height / 2) - 1
 	elseif a == "SW" then
-		return Fnote.config.window.offset.x, vimH - height - Fnote.config.window.offset.y - 2
+		return M.config.window.offset.x, vimH - height - M.config.window.offset.y - 2
 	elseif a == "N" then
-		return (vimW / 2) - (width / 2) - 1, Fnote.config.window.offset.y
+		return (vimW / 2) - (width / 2) - 1, M.config.window.offset.y
 	elseif a == "center" then
 		return (vimW / 2) - (width / 2) - 1, (vimH / 2) - (height / 2) - 1
 	elseif a == "S" then
-		return (vimW / 2) - (width / 2) - 1, vimH - height - Fnote.config.window.offset.y - 2
+		return (vimW / 2) - (width / 2) - 1, vimH - height - M.config.window.offset.y - 2
 	elseif a == "NE" then
-		return vimW - width - Fnote.config.window.offset.x - 2, Fnote.config.window.offset.y
+		return vimW - width - M.config.window.offset.x - 2, M.config.window.offset.y
 	elseif a == "E" then
-		return vimW - width - Fnote.config.window.offset.x - 2, (vimH / 2) - (height / 2) - 1
+		return vimW - width - M.config.window.offset.x - 2, (vimH / 2) - (height / 2) - 1
 	elseif a == "SE" then
-		return vimW - width - Fnote.config.window.offset.x - 2, vimH - height - Fnote.config.window.offset.y - 3
+		return vimW - width - M.config.window.offset.x - 2, vimH - height - M.config.window.offset.y - 3
 	end
 end
 
@@ -65,13 +65,13 @@ local function float()
 
 	local curWin = vim.api.nvim_get_current_win()
 
-	vim.api.nvim_win_set_buf(curWin, Fnote.bufid)
+	vim.api.nvim_win_set_buf(curWin, M.bufid)
 
 	local width, height
 
-	if Fnote.config.window.percent then
-		width = math.floor((Fnote.config.window.width * 0.01) * vim.o.columns)
-		height = math.floor((Fnote.config.window.height * 0.01) * vim.o.lines)
+	if M.config.window.percent then
+		width = math.floor((M.config.window.width * 0.01) * vim.o.columns)
+		height = math.floor((M.config.window.height * 0.01) * vim.o.lines)
 	end
 
 	local x, y = getPos(width, height)
@@ -83,13 +83,13 @@ local function float()
 		col = x,
 		row = y,
 		style = "",
-		border = Fnote.config.window.border or "single",
+		border = M.config.window.border or "single",
 	}
 
-	vim.api.nvim_win_set_option(
-		curWin,
+	vim.api.nvim_set_option_value(
 		"winhighlight",
-		"Normal:FNoteNormal,EndOfBuffer:FNoteEndOfBuffer,NormalNC:FNoteNormalNC,CursorLine:FNoteCursorLine"
+		"Normal:FNoteNormal,EndOfBuffer:FNoteEndOfBuffer,NormalNC:FNoteNormalNC,CursorLine:FNoteCursorLine",
+		{ win = curWin }
 	)
 
 	vim.api.nvim_win_set_config(curWin, opts)
@@ -97,58 +97,59 @@ local function float()
 	return curWin
 end
 
-function Fnote.new()
-	local buf = vim.fn.bufadd(Fnote.config.notes_file)
+function M.new()
+	local buf = vim.fn.bufadd(M.config.notes_file)
 
 	vim.bo[buf].buflisted = false
 	vim.bo[buf].bufhidden = "hide"
+	vim.bo[buf].filetype = "notes.markdown"
 
-	Fnote.bufid = buf
+	M.bufid = buf
 end
 
-function Fnote.open()
-	if Fnote.bufid == nil then
-		Fnote.new()
+function M.open()
+	if M.bufid == nil then
+		M.new()
 	end
 
-	Fnote.winid = float()
+	M.winid = float()
 end
 
-function Fnote.close()
-	if Fnote.winid == nil then
+function M.close()
+	if M.winid == nil then
 		return
 	end
 
-	if not vim.api.nvim_win_is_valid(Fnote.winid) then
-		Fnote.winid = nil
+	if not vim.api.nvim_win_is_valid(M.winid) then
+		M.winid = nil
 		return
 	end
 
-	vim.api.nvim_win_close(Fnote.winid, true)
+	vim.api.nvim_win_close(M.winid, true)
 
-	Fnote.winid = nil
+	M.winid = nil
 end
 
-function Fnote.toggle()
-	if Fnote.winid == nil then
-		Fnote.open()
+function M.toggle()
+	if M.winid == nil then
+		M.open()
 		return
 	end
 
-	if not vim.api.nvim_win_is_valid(Fnote.winid) then
-		Fnote.open()
+	if not vim.api.nvim_win_is_valid(M.winid) then
+		M.open()
 		return
 	end
 
-	Fnote.close()
+	M.close()
 end
 
-function Fnote.setup(config)
-	Fnote.config = vim.deepcopy(defaultConfig)
+function M.setup(config)
+	M.config = vim.deepcopy(defaultConfig)
 
 	if config then
-		Fnote.config = vim.tbl_deep_extend("keep", config, Fnote.config)
+		M.config = vim.tbl_deep_extend("keep", config, M.config)
 	end
 end
 
-return Fnote
+return M
