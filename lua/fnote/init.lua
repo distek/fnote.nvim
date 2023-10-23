@@ -102,7 +102,7 @@ function M.new()
 
 	vim.bo[buf].buflisted = false
 	vim.bo[buf].bufhidden = "hide"
-	vim.bo[buf].filetype = "notes.markdown"
+	vim.bo[buf].filetype = "notes"
 
 	M.bufid = buf
 end
@@ -125,7 +125,7 @@ function M.close()
 		return
 	end
 
-	vim.api.nvim_win_close(M.winid, true)
+	vim.api.nvim_win_hide(M.winid)
 
 	M.winid = nil
 end
