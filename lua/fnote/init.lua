@@ -30,7 +30,7 @@ local defaultConfig = {
 		},
 		border = "single", -- border, see :h nvim_win_set_config
 	},
-	notes_file = "notes.md", -- project local notes file to use
+	notes_file = ".fnote.md", -- project local notes file to use
 }
 
 local function getPos(width, height)
