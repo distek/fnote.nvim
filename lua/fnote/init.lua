@@ -102,17 +102,20 @@ function M.new()
 
 	vim.bo[buf].buflisted = false
 	vim.bo[buf].bufhidden = "hide"
-	vim.bo[buf].filetype = "notes"
+	vim.bo[buf].filetype = "fnote"
+	vim.bo[buf].syntax = "markdown"
 
 	M.bufid = buf
 end
 
-function M.open()
+function M.open(doFloat)
 	if M.bufid == nil then
 		M.new()
 	end
 
-	M.winid = float()
+	if doFloat then
+		M.winid = float()
+	end
 end
 
 function M.close()
@@ -145,6 +148,8 @@ function M.toggle()
 end
 
 function M.setup(config)
+	vim.treesitter.language.register("markdown", { "fnote" })
+
 	M.config = vim.deepcopy(defaultConfig)
 
 	if config then
