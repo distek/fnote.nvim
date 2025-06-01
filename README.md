@@ -1,5 +1,12 @@
 # fnote
 
+
+> [!WARNING]
+> I no longer use this as I've created an alternative solution [using tmux](https://github.com/distek/tmux-tools?tab=readme-ov-file#notes) instead of nvim
+> 
+> This repo will not be maintained.
+
+
 Super simple, toggle-able, project notes floating window
 
 ## Installation
